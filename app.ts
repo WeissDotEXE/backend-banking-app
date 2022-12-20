@@ -1,4 +1,5 @@
 import express, { json, NextFunction } from "express";
+import authRouter from "./routes/authRoutes";
 
 import path from "path";
 import morgan from "morgan";
@@ -14,5 +15,7 @@ if (process.env.NODE_ENV === "development") {
 //transform it in a js object
 app.use(morgan("dev")); //
 app.use(express.json());
+
+app.use("/api/v1/auth", authRouter);
 
 export default app;
