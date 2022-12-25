@@ -1,5 +1,8 @@
 import express, { json, NextFunction } from "express";
 import authRouter from "./routes/authRoutes";
+import bankingCardRouter from "./routes/bankingCardRoutes";
+import transactionRouter from "./routes/transactionRoutes";
+import userRouter from "./routes/userRoutes";
 
 import path from "path";
 import morgan from "morgan";
@@ -17,5 +20,8 @@ app.use(morgan("dev")); //
 app.use(express.json());
 
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/bankingCards", bankingCardRouter);
+app.use("/api/v1/transaction", transactionRouter);
+app.use("/api/v1/user", userRouter);
 
 export default app;
