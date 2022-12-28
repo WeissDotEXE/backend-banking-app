@@ -17,6 +17,10 @@ const transactionModel = new mongoose.Schema({
     type: Number,
     required: [true, "transaction must have an amount"],
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 const Transaction = mongoose.model("Transaction", transactionModel);

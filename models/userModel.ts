@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const userModel = new mongoose.Schema({
   fullName: {
     type: String,
-    required: [true, "User must have an username"],
+    required: [true, "User must have a fullName"],
   },
   email: {
     type: String,
@@ -26,6 +26,7 @@ const userModel = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
+  cards: [{ type: mongoose.Schema.Types.ObjectId, ref: "BankingCard" }],
 });
 
 const User = mongoose.model("User", userModel);

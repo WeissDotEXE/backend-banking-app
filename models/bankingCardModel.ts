@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 
 const bankingCardModel = new mongoose.Schema({
   cardNumber: {
@@ -6,10 +6,6 @@ const bankingCardModel = new mongoose.Schema({
     length: 16,
     unique: true,
     required: [true, "Banking card must have a number"],
-  },
-  name: {
-    type: String,
-    required: [true, "Banking card must have a name"],
   },
   expireDate: {
     type: Date,
@@ -32,6 +28,10 @@ const bankingCardModel = new mongoose.Schema({
     type: Date,
     default: Date.now(),
     selected: false,
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: [true, "Banking app must have an userId"],
   },
 });
 
