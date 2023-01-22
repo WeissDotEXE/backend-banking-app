@@ -3,12 +3,13 @@ import authRouter from "./routes/authRoutes";
 import bankingCardRouter from "./routes/bankingCardRoutes";
 import transactionRouter from "./routes/transactionRoutes";
 import userRouter from "./routes/userRoutes";
+import cors from "cors";
 
 import path from "path";
 import morgan from "morgan";
 
 const app = express();
-
+app.use(cors());
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }

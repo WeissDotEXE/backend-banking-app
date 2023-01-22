@@ -3,23 +3,32 @@ import catchAsync from "../utils/catchAsync";
 import AppError from "../utils/appError";
 import { NextFunction, Response, Request } from "express";
 
-const getBankingCards = (req: Request, res: Response, next: NextFunction) => {
-  res.status(200).json({ status: "test", message: "test" });
+// to-do
+//1. make sure User is in database by using User.find(id) - id is in body
+// first thing in getBankingCards Controller
+
+const getBankingCards = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const bankingCards = await BankingCard.find({ userId });
+    if (bankingCards.length === 0)
+      return res
+        .status(200)
+        .json({ status: "succes", message: "This user has 0 banking cards" });
+    res.status(200).json({ status: "succes", data: bankingCards });
+  } catch (error) {
+    res.send(400).json({ status: "fail", message: error });
+  }
 };
 
-const createBankingCard = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+//success
+const createBankingCard = async (req: Request, res: Response) => {
   try {
-    const { cardNumber, expireDate, cvv, type, processing, createdAt, user } =
-      req.body;
     const newBankingCard = await BankingCard.create(req.body);
     res.status(201).json({
       status: "succes",
       data: {
-        tour: newBankingCard,
+        bankingCard: newBankingCard,
       },
     });
   } catch (err: any) {
@@ -30,6 +39,7 @@ const createBankingCard = async (
   }
 };
 
+//succes
 const deleteBankingCard = async (
   req: Request,
   res: Response,
