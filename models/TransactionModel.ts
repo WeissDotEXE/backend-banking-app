@@ -1,9 +1,13 @@
 import mongoose from "mongoose";
 
 const transactionModel = new mongoose.Schema({
-  type: {
-    type: String,
-    required: [true, "Transaction must have a type"],
+  senderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: [true, "Transaction must have a senderId"],
+  },
+  receiverId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: [true, "Transaction must have a receiverId"],
   },
   message: {
     type: String,
@@ -11,15 +15,14 @@ const transactionModel = new mongoose.Schema({
   transactionDate: {
     type: Date,
     default: Date.now(),
-    required: [true, "Transaction must have a date"],
   },
   amount: {
     type: Number,
-    required: [true, "transaction must have an amount"],
+    required: [true, "Transaction must have an amount"],
   },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+  currency: {
+    type: String,
+    required: [true, "Transaction must have a currency"],
   },
 });
 

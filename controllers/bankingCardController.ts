@@ -1,5 +1,4 @@
 import BankingCard from "../models/bankingCardModel";
-import catchAsync from "../utils/catchAsync";
 import AppError from "../utils/appError";
 import { NextFunction, Response, Request } from "express";
 
