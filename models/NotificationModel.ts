@@ -5,9 +5,13 @@ const notificationModel = new mongoose.Schema({
     type: String,
     required: [true, "Notification must have a message"],
   },
-  userId: {
+  senderId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: [true, "Notification must have a userId"],
+    required: [true, "Notification must have a senderId"],
+  },
+  receiverId: {
+    type: mongoose.Schema.Types.ObjectId,
+    require: [true, "Notification must have a recipientId"],
   },
   avatarUrl: {
     type: String,

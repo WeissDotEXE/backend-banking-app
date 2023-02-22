@@ -1,8 +1,19 @@
 import express from "express";
-// import controllers from notificationController.ts
+
+import {
+  createNotification,
+  getAllNotifications,
+  deleteOneNotification,
+  deleteAllNotifications,
+} from "../controllers/notificationController";
 
 const router = express.Router();
-
-router.route("/:userId").get();
+//todo create controllers
+router.route("/createnotification").post(createNotification);
+router.route("/:userId").get(getAllNotifications);
+router
+  .route("/deleteone/:receiverId/:notificationId")
+  .delete(deleteOneNotification);
+router.route("/deleteall/:userId").delete(deleteAllNotifications);
 
 export default router;
