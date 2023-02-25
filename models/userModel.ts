@@ -2,7 +2,20 @@ import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
 
-const userModel = new mongoose.Schema({
+interface UserDocument extends Document {
+  id: number;
+  fullName: string;
+  email: string;
+  password: string;
+  repeatPassword: string;
+  avatarImg: string;
+  iban: string;
+  joinDate: number;
+  role: string;
+  correctPassword(candidatePassword: string, userPassword: string): boolean;
+}
+
+const userSchema = new mongoose.Schema({
   fullName: {
     type: String,
     required: [true, "User must have a fullName"],
@@ -18,6 +31,8 @@ const userModel = new mongoose.Schema({
     type: String,
     required: [true, "user must have an password"],
     minlength: 6,
+    //for not returning it in response
+    select: false,
   },
   repeatPassword: {
     type: String,
@@ -39,7 +54,7 @@ const userModel = new mongoose.Schema({
 });
 
 //between getting the data and saving it
-userModel.pre("save", async function (next) {
+userSchema.pre("save", async function (next) {
   // Only run this function if password was modified
   if (!this.isModified("password")) return next();
 
@@ -52,5 +67,14 @@ userModel.pre("save", async function (next) {
   next();
 });
 
-const User = mongoose.model("User", userModel);
+// compare password provided by user
+// with hashed password in db
+userSchema.methods.correctPassword = async function (
+  candidatePassword: string,
+  userPassword: string
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+const User = mongoose.model<UserDocument>("User", userSchema);
 export default User;
