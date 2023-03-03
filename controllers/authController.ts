@@ -26,7 +26,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
 
     const token = signToken(newUser._id);
 
-    res.status(201).json({ status: "succes", token, data: { newUser } });
+    res.status(201).json({ status: "succes", token, data: newUser });
   } catch (error) {
     res.status(400).json({ status: "fail", message: error });
   }
@@ -47,7 +47,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     //2) Check if user exists && password is correct
     const user = await User.findOne({ email }).select("+password");
 
-    if (!user || !(await user?.correctPassword(password, user?.password))) {
+    if (!user || !user?.correctPassword(password, user?.password)) {
       res
         .status(401)
         .json({ status: "fail", message: "Incorrect email or password" });
@@ -59,6 +59,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json({
       status: "succes",
       token,
+      data: user,
     });
   } catch (error) {
     res.status(400).json({ status: "fail", message: error });
