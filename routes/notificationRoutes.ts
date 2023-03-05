@@ -1,4 +1,5 @@
 import express from "express";
+import { protect } from "../controllers/authController";
 
 import {
   createNotification,
@@ -9,11 +10,11 @@ import {
 
 const router = express.Router();
 //todo create controllers
-router.route("/createnotification").post(createNotification);
-router.route("/:userId").get(getAllNotifications);
+router.route("/createnotification").post(protect, createNotification);
+router.route("/:userId").get(protect, getAllNotifications);
 router
   .route("/deleteone/:receiverId/:notificationId")
-  .delete(deleteOneNotification);
-router.route("/deleteall/:userId").delete(deleteAllNotifications);
+  .delete(protect, deleteOneNotification);
+router.route("/deleteall/:userId").delete(protect, deleteAllNotifications);
 
 export default router;

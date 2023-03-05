@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 interface UserDocument extends Document {
   id: number;
@@ -8,11 +9,16 @@ interface UserDocument extends Document {
   email: string;
   password: string;
   repeatPassword: string;
+  passwordChangedAt: Date;
+  passwordResetToken: string | undefined;
+  passwordResetExpires: Date | undefined;
   avatarImg: string;
   iban: string;
   joinDate: number;
   role: string;
   correctPassword(candidatePassword: string, userPassword: string): boolean;
+  changedPasswordAfter(JWTTimestamp: number): boolean;
+  createPasswordResetToken(): any;
 }
 
 const userSchema = new mongoose.Schema({
@@ -38,6 +44,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "User must have a repeatPassword"],
   },
+  passwordChangedAt: {
+    type: Date,
+  },
+  passwordResetToken: String,
+  passwordResetExpires: Date,
   avatarImg: {
     type: String,
     default: "", //set default value with a local file
@@ -74,6 +85,33 @@ userSchema.methods.correctPassword = async function (
   userPassword: string
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+userSchema.methods.changedPasswordAfter = async function (
+  JWTTimestamp: number
+) {
+  if (this.passwordChangedAt) {
+    const changedTimeStamp = parseInt(this.passwordChangedAt.getTime(), 10);
+    console.log(changedTimeStamp, JWTTimestamp);
+    // return JWTTimestamp < changedTimeStamp;
+  }
+
+  //False means NOT changed
+  return false;
+};
+
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  console.log({ resetToken }, this.passwordResetToken);
+
+  //reset in 10 minutes formula
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  return resetToken;
 };
 
 const User = mongoose.model<UserDocument>("User", userSchema);
