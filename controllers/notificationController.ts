@@ -6,12 +6,12 @@
 import { Request, Response } from "express";
 import Notification from "../models/NotificationModel";
 
-//succes
+//success
 const createNotification = async (req: Request, res: Response) => {
   try {
     const newNotification = await Notification.create(req.body);
     res.status(201).json({
-      status: "succes",
+      status: "success",
       data: {
         bankingCard: newNotification,
       },
@@ -24,7 +24,7 @@ const createNotification = async (req: Request, res: Response) => {
   }
 };
 
-//succes
+//success
 const getAllNotifications = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
@@ -32,15 +32,15 @@ const getAllNotifications = async (req: Request, res: Response) => {
     if (notifications.length === 0) {
       return res
         .status(200)
-        .json({ status: "succes", message: "This user has 0 notifications" });
+        .json({ status: "success", message: "This user has 0 notifications" });
     }
-    res.status(200).json({ status: "succes", data: notifications });
+    res.status(200).json({ status: "success", data: notifications });
   } catch (error) {
     res.status(400).json({ status: "fail", message: error });
   }
 };
 
-//succes
+//success
 const deleteOneNotification = async (req: Request, res: Response) => {
   try {
     const { receiverId, notificationId } = req.params;
@@ -48,18 +48,18 @@ const deleteOneNotification = async (req: Request, res: Response) => {
       receiverId,
       notificationId,
     });
-    res.status(202).json({ status: "succes", deletedNotification });
+    res.status(202).json({ status: "success", deletedNotification });
   } catch (error) {
     res.status(400).json({ status: "fail", message: error });
   }
 };
 
-//succes
+//success
 const deleteAllNotifications = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const deletedNotifications = await Notification.deleteMany({ userId });
-    res.status(202).json({ status: "succes", deletedNotifications });
+    res.status(202).json({ status: "success", deletedNotifications });
   } catch (error) {
     res.status(400).json({ status: "fail", message: error });
   }

@@ -13,8 +13,8 @@ const getBankingCards = async (req: Request, res: Response) => {
     if (bankingCards.length === 0)
       return res
         .status(200)
-        .json({ status: "succes", message: "This user has 0 banking cards" });
-    res.status(200).json({ status: "succes", data: bankingCards });
+        .json({ status: "success", message: "This user has 0 banking cards" });
+    res.status(200).json({ status: "success", data: bankingCards });
   } catch (error) {
     res.send(400).json({ status: "fail", message: error });
   }
@@ -25,7 +25,7 @@ const createBankingCard = async (req: Request, res: Response) => {
   try {
     const newBankingCard = await BankingCard.create(req.body);
     res.status(201).json({
-      status: "succes",
+      status: "success",
       data: {
         bankingCard: newBankingCard,
       },
@@ -38,7 +38,7 @@ const createBankingCard = async (req: Request, res: Response) => {
   }
 };
 
-//succes
+//success
 const deleteBankingCard = async (
   req: Request,
   res: Response,
@@ -49,7 +49,7 @@ const deleteBankingCard = async (
     if (!deletedBankingCard) {
       return next(new AppError("No banking card found with that id", 404));
     }
-    res.status(204).json({ status: "succes" });
+    res.status(204).json({ status: "success" });
   } catch (error: any) {
     res.status(400).json({
       status: error.status,

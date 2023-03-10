@@ -33,7 +33,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
     const token = signToken(newUser._id);
 
-    res.status(201).json({ status: "succes", token, data: newUser });
+    res.status(201).json({ status: "success", token, data: newUser });
   } catch (error) {
     res.status(400).json({ status: "fail", message: error });
   }
@@ -64,7 +64,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     //3) If everything is correct, send token to client
     const token = signToken(user._id);
     res.status(200).json({
-      status: "succes",
+      status: "success",
       token,
       data: user,
     });
@@ -162,15 +162,15 @@ const forgotPassword = async (
       user.passwordResetExpires = undefined;
       await user.save({ validateBeforeSave: false });
 
-      res
-        .status(400)
-        .json({
-          status: "fail",
-          message: "there was an error, please try again",
-        });
+      res.status(400).json({
+        status: "fail",
+        message: "there was an error, please try again",
+      });
     }
 
-    res.status(200).json({ status: "succes", message: "Token sent to email!" });
+    res
+      .status(200)
+      .json({ status: "success", message: "Token sent to email!" });
   } catch (error) {
     res.status(400).json({ status: "fail", message: error });
   }

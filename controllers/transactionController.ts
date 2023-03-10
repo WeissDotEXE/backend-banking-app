@@ -8,9 +8,9 @@ const getTransactions = async (req: Request, res: Response) => {
     if (transactions.length === 0) {
       return res
         .status(200)
-        .json({ status: "succes", message: "No transactions" });
+        .json({ status: "success", message: "No transactions" });
     }
-    res.status(200).json({ status: "succes", data: transactions });
+    res.status(200).json({ status: "success", data: transactions });
   } catch (error) {
     res.status(400).json({ status: "fail", message: error });
   }
@@ -25,7 +25,7 @@ const sendTransaction = async (req: Request, res: Response) => {
         .json({ status: "fail", message: "You can't send money to yourself" });
     const newTransaction = await Transaction.create(req.body);
     res.status(201).json({
-      status: "succes",
+      status: "success",
       data: {
         transaction: newTransaction,
       },

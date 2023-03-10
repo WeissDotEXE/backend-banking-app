@@ -13,7 +13,7 @@ router
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-      res.status(200).json({ status: "succes" });
+      res.status(200).json({ status: "success" });
     }
   );
 router
@@ -26,7 +26,7 @@ router
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-      res.status(200).json({ status: "succes" });
+      res.status(200).json({ status: "success" });
     }
   );
 
