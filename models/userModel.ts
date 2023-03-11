@@ -2,9 +2,10 @@ import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import Friend from "./friendModel";
 
 interface UserDocument extends Document {
-  id: number;
+  id: mongoose.Schema.Types.ObjectId;
   fullName: string;
   email: string;
   password: string;
@@ -62,6 +63,7 @@ const userSchema = new mongoose.Schema({
     default: Date.now(),
   },
   cards: [{ type: mongoose.Schema.Types.ObjectId, ref: "BankingCard" }],
+  friends: { type: [Friend] },
 });
 
 //between getting the data and saving it

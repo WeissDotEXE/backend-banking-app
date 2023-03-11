@@ -1,5 +1,6 @@
 import express from "express";
 import { body, validationResult } from "express-validator";
+import { login, register } from "../controllers/authController";
 const router = express.Router();
 
 router
@@ -8,26 +9,10 @@ router
     body("username").isString().isLength({ min: 5, max: 30 }),
     body("email").isEmail(),
     body("password").isLength({ min: 5 }),
-    (req: express.Request, res: express.Response) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
-      res.status(200).json({ status: "success" });
-    }
+    register
   );
 router
   .route("/login")
-  .post(
-    body("email").isEmail(),
-    body("password").isLength({ min: 5 }),
-    (req: express.Request, res: express.Response) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
-      res.status(200).json({ status: "success" });
-    }
-  );
+  .post(body("email").isEmail(), body("password").isLength({ min: 5 }), login);
 
 export default router;
