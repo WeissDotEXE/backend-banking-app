@@ -63,7 +63,8 @@ const userSchema = new mongoose.Schema({
     default: Date.now(),
   },
   cards: [{ type: mongoose.Schema.Types.ObjectId, ref: "BankingCard" }],
-  friends: { type: [Friend] },
+  //TODO friend collection
+  // friends: { type: [Friend] },
 });
 
 //between getting the data and saving it
