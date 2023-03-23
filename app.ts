@@ -4,6 +4,7 @@ import bankingCardRouter from "./routes/bankingCardRoutes";
 import transactionRouter from "./routes/transactionRoutes";
 import userRouter from "./routes/userRoutes";
 import notificationRouter from "./routes/notificationRoutes";
+import friendsRouter from "./routes/friendsRoutes";
 import validUserId from "./middleware/checkUserId";
 import cors from "cors";
 
@@ -28,5 +29,6 @@ app.use("/api/v1/bankingCards", bankingCardRouter);
 app.use("/api/v1/transaction", transactionRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/notification", notificationRouter);
+app.use("/api/v1/friends", friendsRouter);
 
 export default app;

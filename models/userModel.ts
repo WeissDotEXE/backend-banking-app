@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
-import Friend from "./friendModel";
+import Friends from "../models/friendModel";
 
 interface UserDocument extends Document {
   id: mongoose.Schema.Types.ObjectId;
@@ -17,6 +17,7 @@ interface UserDocument extends Document {
   iban: string;
   joinDate: number;
   role: string;
+  friends: mongoose.Schema.Types.ObjectId[];
   correctPassword(candidatePassword: string, userPassword: string): boolean;
   changedPasswordAfter(JWTTimestamp: number): boolean;
   createPasswordResetToken(): any;
@@ -63,8 +64,8 @@ const userSchema = new mongoose.Schema({
     default: Date.now(),
   },
   cards: [{ type: mongoose.Schema.Types.ObjectId, ref: "BankingCard" }],
-  //TODO friend collection
-  // friends: { type: [Friend] },
+
+  friends: [{ type: Schema.Types.ObjectId, ref: "Friends" }],
 });
 
 //between getting the data and saving it
