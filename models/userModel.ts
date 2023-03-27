@@ -17,7 +17,10 @@ interface UserDocument extends Document {
   iban: string;
   joinDate: number;
   role: string;
-  friends: mongoose.Schema.Types.ObjectId[];
+  friends: {
+    friendId: mongoose.Schema.Types.ObjectId;
+    status: "pending" | "accepted";
+  }[];
   correctPassword(candidatePassword: string, userPassword: string): boolean;
   changedPasswordAfter(JWTTimestamp: number): boolean;
   createPasswordResetToken(): any;
@@ -65,7 +68,19 @@ const userSchema = new mongoose.Schema({
   },
   cards: [{ type: mongoose.Schema.Types.ObjectId, ref: "BankingCard" }],
 
-  friends: [{ type: Schema.Types.ObjectId, ref: "Friends" }],
+  friends: [
+    {
+      friendId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      status: {
+        type: String,
+        enum: ["pending", "accepted"],
+        default: "pending",
+      },
+    },
+  ],
 });
 
 //between getting the data and saving it

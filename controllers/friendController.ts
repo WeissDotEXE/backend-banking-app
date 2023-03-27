@@ -14,28 +14,20 @@ const getUserFriends = async (req: Request, res: Response) => {
 
 const addFriend = async (req: Request, res: Response) => {
   try {
-    const friendObj = {
-      id: req.body.id,
-      fullName: req.body.fullName,
-      avatarImage: req.body.avatarImage,
-      email: req.body.email,
-    };
-    const response = User.findOneAndUpdate(
-      { _id: req.params.userId },
-      { $push: { friends: friendObj } }
+    const { userId } = req.params;
+    const { friendId } = req.body;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $push: { friends: { friendId } } },
+      { new: true }
     );
-    console.log(response);
-
-    res.status(201).json({
-      status: "succes",
-      message: `${req.body.id} has been added to your friend list`,
-    });
+    res.status(200).json({ status: "success", user });
   } catch (error) {
     res.status(400).json({ status: "fail", message: error });
   }
 };
 
-const deleteFriend = async (req: Request, res: Response) => {
+const deleteFriend = async (res: Response) => {
   try {
   } catch (error) {
     res.status(400).json({ status: "fail", message: error });
