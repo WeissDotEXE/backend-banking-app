@@ -43,7 +43,7 @@ const getUserTransactions = async (req: Request, res: Response) => {
     const response = await Transaction.find({ receiverId: userId });
     if (response.length === 0) {
       res.status(200).json({
-        status: "succes",
+        status: "success",
         data: response,
         message: "No transactions yet",
       });
@@ -58,7 +58,7 @@ const getUserBankingCards = async (req: Request, res: Response) => {
     const response = await BankingCard.find({ userId });
     if (response.length === 0) {
       res.status(200).json({
-        status: "succes",
+        status: "success",
         data: response,
         message: "No cards yet",
       });
