@@ -19,7 +19,6 @@ const existingFriend = async (
         .status(400)
         .json({ status: "fail", message: "Friend already added" });
     } else {
-      res.json({ user });
       // If friend does not exist, proceed to next middleware or route handler
       next();
     }

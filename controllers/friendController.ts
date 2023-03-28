@@ -27,8 +27,18 @@ const addFriend = async (req: Request, res: Response) => {
   }
 };
 
-const deleteFriend = async (res: Response) => {
+const deleteFriend = async (req: Request, res: Response) => {
   try {
+    const { friendId } = req.body;
+    const { userId } = req.params;
+
+    const user = await User.findByIdAndUpdate(userId, {
+      $pull: { friends: { friendId } },
+    });
+    res.status(204).json({
+      status: "success",
+      message: `User ${user} has been deleted from your friend list`,
+    });
   } catch (error) {
     res.status(400).json({ status: "fail", message: error });
   }
