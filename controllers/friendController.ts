@@ -5,7 +5,7 @@ import User from "../models/userModel";
 
 type NotificationType = {
   message: string;
-  senderId: string;
+  senderId: ObjectId;
 };
 
 const getUserFriends = async (req: Request, res: Response) => {
@@ -46,7 +46,7 @@ const sendFriendRequest = async (req: Request, res: Response) => {
         $push: {
           notifications: {
             message: `${senderUser?.fullName} want to add you to friend list`,
-            senderId: new ObjectId(userId),
+            senderId:new ObjectId(userId)
           },
         },
       },
@@ -58,6 +58,8 @@ const sendFriendRequest = async (req: Request, res: Response) => {
       message: `Friend request sent successfully to ${receiverUser!.fullName}`,
     });
   } catch (error) {
+    console.log(error);
+    
     res.status(400).json({ status: "fail", message: error });
   }
 };

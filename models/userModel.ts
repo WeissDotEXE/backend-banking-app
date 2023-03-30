@@ -86,9 +86,13 @@ const userSchema = new mongoose.Schema({
   ],
   notifications: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Notification",
-      default: [],
+      senderId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Notification",
+      },
+      message: {
+        type: String,
+      },
     },
   ],
 });

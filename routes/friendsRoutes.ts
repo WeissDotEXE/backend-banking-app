@@ -15,7 +15,7 @@ const router = express.Router();
 router
   .route("/sendFriendRequest/:userId")
   .patch(existingFriend, sendFriendRequest);
-router.route("/acceptFriendRequest/:userId").put(acceptFriendRequest);
+router.route("/acceptFriendRequest/:userId").patch(acceptFriendRequest);
 
 router.route("/getFriends/:userId").get(getUserFriends);
 router.route("/deleteFriend/:userId").delete(deleteFriend);
