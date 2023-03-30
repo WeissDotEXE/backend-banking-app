@@ -66,7 +66,9 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
-  cards: [{ type: mongoose.Schema.Types.ObjectId, ref: "BankingCard" }],
+  cards: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "BankingCard", default: null },
+  ],
 
   friends: [
     {
@@ -79,6 +81,14 @@ const userSchema = new mongoose.Schema({
         enum: ["pending", "accepted"],
         default: "pending",
       },
+      default: [],
+    },
+  ],
+  notifications: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Notification",
+      default: [],
     },
   ],
 });

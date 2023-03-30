@@ -13,7 +13,7 @@ const createNotification = async (req: Request, res: Response) => {
     res.status(201).json({
       status: "success",
       data: {
-        bankingCard: newNotification,
+        newNotification,
       },
     });
   } catch (err: any) {
