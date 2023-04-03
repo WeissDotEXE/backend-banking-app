@@ -72,8 +72,22 @@ const sendFriendRequest = async (req: Request, res: Response) => {
 const acceptFriendRequest = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const { friendId } = req.params;
-    const user = await User.findByIdAndUpdate(userId);
+    const { friendId } = req.body;
+    
+    // Update the status of the specified friend in the user's friends array
+    // for both users (receiver and sender)
+     const test1=await User.updateOne(
+      { _id: userId, 'friends': { $elemMatch: { id: friendId } } },
+      { $set: { 'friends.$.status': "accepted" } },
+      { new: true }
+    );
+    const test2=await User.updateOne(
+      { _id: friendId, 'friends': { $elemMatch: { id: userId } } },
+      { $set: { 'friends.$.status': "accepted" } },
+      { new: true }
+    ); 
+
+    res.status(200).json({status:"success",test1,test2});
   } catch (error) {
     res.status(400).json({ status: "fail", message: error });
   }
@@ -106,8 +120,6 @@ const deleteFriend = async (req: Request, res: Response) => {
       message: `User has been deleted  from friends list`,
     });
   } catch (error) {
-    console.log(error);
-
     res.status(400).json({ status: "fail", message: error });
   }
 };
