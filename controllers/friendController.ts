@@ -21,20 +21,28 @@ const getUserFriends = async (req: Request, res: Response) => {
 const sendFriendRequest = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const { friendId } = req.body;
+    const { friendId} = req.body;
 
+    //1. luam informatiile de la cel care trimite 
+    const senderUser=await User.findById(userId,"_id fullName email avatarImg")
+    //2. luam informatiile de la cel care primeste
+    const receiverUser=await User.findById(friendId,"_id fullName email avatarImg")
+    console.log(senderUser,receiverUser);
+    
     // post request for updating friend list for sender
-    const senderUser = await User.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
       userId,
-      { $push: { friends: { friendId } } },
+      //3.bagam datele in request
+      { $push: { friends:  receiverUser } },
       { new: true }
     );
-
+    
     // post request for updating friend list for receiver
-    const receiverUser = await User.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
       friendId,
       {
-        $push: { friends: { friendId: userId } },
+        //4. bagam datele in request
+        $push: { friends: senderUser },
       },
       { new: true }
     );

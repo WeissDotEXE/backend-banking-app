@@ -56,7 +56,7 @@ const userSchema = new mongoose.Schema({
   passwordResetExpires: Date,
   avatarImg: {
     type: String,
-    default: "", //set default value with a local file
+    default: "https://www.w3schools.com/howto/img_avatar.png", //set default value with a local file
   },
   iban: {
     type: String,
@@ -75,13 +75,26 @@ const userSchema = new mongoose.Schema({
       friendId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
+        required: [true, "Friend must habe friendId"],
+      },
+      fullName: {
+        type: String,
+        required: [true, "Friend must have fullName"],
+      },
+      email: {
+        type: String,
+        required: [true, "Friend must have email"],
+      },
+      avatarImg: {
+        type: String,
+        required: [true, "Friend must have avatarImg"],
+        default: "https://www.w3schools.com/howto/img_avatar.png",
       },
       status: {
         type: String,
         enum: ["pending", "accepted"],
         default: "pending",
       },
-      default: [],
     },
   ],
   notifications: [
