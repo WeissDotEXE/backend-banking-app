@@ -24,16 +24,16 @@ const sendFriendRequest = async (req: Request, res: Response) => {
     const { friendId} = req.body;
 
     //1. luam informatiile de la cel care trimite 
-    const senderUser=await User.findById(userId,"_id fullName email avatarImg")
+    const sender=await User.findById(userId,"_id fullName email avatarImg")
     //2. luam informatiile de la cel care primeste
-    const receiverUser=await User.findById(friendId,"_id fullName email avatarImg")
-    console.log(senderUser,receiverUser);
+    const receiver=await User.findById(friendId,"_id fullName email avatarImg")
+    console.log(sender,receiver);
     
     // post request for updating friend list for sender
     await User.findByIdAndUpdate(
       userId,
       //3.bagam datele in request
-      { $push: { friends:  receiverUser } },
+      { $push: { friends:  receiver } },
       { new: true }
     );
     
@@ -42,7 +42,7 @@ const sendFriendRequest = async (req: Request, res: Response) => {
       friendId,
       {
         //4. bagam datele in request
-        $push: { friends: senderUser },
+        $push: { friends: sender },
       },
       { new: true }
     );
@@ -53,8 +53,8 @@ const sendFriendRequest = async (req: Request, res: Response) => {
       {
         $push: {
           notifications: {
-            message: `${senderUser?.fullName} want to add you to friend list`,
-            senderId:new ObjectId(userId)
+            message: `${sender?.fullName} want to add you to friend list`,
+            sender:sender
           },
         },
       },
@@ -63,7 +63,7 @@ const sendFriendRequest = async (req: Request, res: Response) => {
 
     res.status(200).json({
       status: "success",
-      message: `Friend request sent successfully to ${receiverUser!.fullName}`,
+      message: `Friend request sent successfully to ${receiver!.fullName}`,
     });
   } catch (error) {
     console.log(error);
