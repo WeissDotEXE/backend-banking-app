@@ -105,6 +105,20 @@ const userSchema = new mongoose.Schema({
       },
       message: {
         type: String,
+        required: [true, "Notification must have a message"],
+      },
+      avatarImg: {
+        type: String,
+        required: [true, "Notification must have an avatarImg"],
+      },
+      type: {
+        type: Number,
+        enums: [
+          0, //'friend request',
+          1, //'accepted friend request'
+          2, //'request money',
+          3, //'sent money',
+        ],
       },
     },
   ],

@@ -3,10 +3,6 @@ import mongoose from "mongoose";
 import { ObjectId } from "mongodb";
 import User from "../models/userModel";
 
-type NotificationType = {
-  message: string;
-  senderId: ObjectId;
-};
 
 const getUserFriends = async (req: Request, res: Response) => {
   try {
@@ -23,16 +19,18 @@ const sendFriendRequest = async (req: Request, res: Response) => {
     const { userId } = req.params;
     const { friendId} = req.body;
 
-    //1. luam informatiile de la cel care trimite 
+    
+
+    // luam informatiile de la cel care trimite 
     const sender=await User.findById(userId,"_id fullName email avatarImg")
-    //2. luam informatiile de la cel care primeste
+    // luam informatiile de la cel care primeste
     const receiver=await User.findById(friendId,"_id fullName email avatarImg")
     console.log(sender,receiver);
     
     // post request for updating friend list for sender
     await User.findByIdAndUpdate(
       userId,
-      //3.bagam datele in request
+      // bagam datele in request
       { $push: { friends:  receiver } },
       { new: true }
     );
@@ -41,7 +39,7 @@ const sendFriendRequest = async (req: Request, res: Response) => {
     await User.findByIdAndUpdate(
       friendId,
       {
-        //4. bagam datele in request
+        //bagam datele in request
         $push: { friends: sender },
       },
       { new: true }
@@ -53,8 +51,10 @@ const sendFriendRequest = async (req: Request, res: Response) => {
       {
         $push: {
           notifications: {
+            senderId:sender?._id,
             message: `${sender?.fullName} want to add you to friend list`,
-            sender:sender
+            avatarImg:sender?.avatarImg,
+            type:0 //friendRequest
           },
         },
       },
@@ -81,21 +81,41 @@ const acceptFriendRequest = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { friendId } = req.body;
+
+    const friend=await User.findById(friendId,"_id fullName email avatarImg")
+
+    const acceptFriendRequestNotification={
+      message: `${friend?.fullName} has accepted your friend request`,
+          sender:friend,
+          type:1 //friendRequest
+    }
     
     // Update the status of the specified friend in the user's friends array
     // for both users (receiver and sender)
-     const test1=await User.updateOne(
+    await User.updateOne(
       { _id: userId, 'friends': { $elemMatch: { id: friendId } } },
       { $set: { 'friends.$.status': "accepted" } },
       { new: true }
     );
-    const test2=await User.updateOne(
+    
+    await User.updateOne(
       { _id: friendId, 'friends': { $elemMatch: { id: userId } } },
       { $set: { 'friends.$.status': "accepted" } },
       { new: true }
-    ); 
+    );
 
-    res.status(200).json({status:"success",test1,test2});
+    //send notification to sender when receiver accepts the request
+    await User.findByIdAndUpdate(
+      friendId,
+      {
+        $push: {
+          notifications: {acceptFriendRequestNotification},
+        },
+      },
+      { new: true }
+    );
+
+    res.status(200).json({status:"success",message:"Friend request accepted"});
   } catch (error) {
     res.status(400).json({ status: "fail", message: error });
   }
