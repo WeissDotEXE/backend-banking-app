@@ -1,4 +1,4 @@
-import express, { json, NextFunction } from "express";
+import express, {json, NextFunction} from "express";
 import authRouter from "./routes/authRoutes";
 import bankingCardRouter from "./routes/bankingCardRoutes";
 import transactionRouter from "./routes/transactionRoutes";
@@ -14,7 +14,7 @@ import morgan from "morgan";
 const app = express();
 app.use(cors());
 if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
+    app.use(morgan("dev"));
 }
 
 //middleware - modify the incoming request data

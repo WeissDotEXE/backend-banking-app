@@ -2,7 +2,6 @@ import express from "express";
 import { protect } from "../controllers/authController";
 
 import {
-  createNotification,
   getAllNotifications,
   deleteOneNotification,
   deleteAllNotifications,
@@ -10,10 +9,9 @@ import {
 
 const router = express.Router();
 //todo create controllers
-router.route("/createnotification").post(protect, createNotification);
 router.route("/:userId").get(protect, getAllNotifications);
 router
-  .route("/deleteone/:receiverId/:notificationId")
+  .route("/deleteone/:userId/:notificationId")
   .delete(protect, deleteOneNotification);
 router.route("/deleteall/:userId").delete(protect, deleteAllNotifications);
 
