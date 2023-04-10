@@ -75,7 +75,7 @@ const userSchema = new mongoose.Schema({
       friendId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: [true, "Friend must habe friendId"],
+        required: [true, "Friend must have friendId"],
       },
       fullName: {
         type: String,
