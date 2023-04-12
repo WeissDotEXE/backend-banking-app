@@ -66,62 +66,6 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
-  cards: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "BankingCard", default: null },
-  ],
-
-  friends: [
-    {
-      friendId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: [true, "Friend must have friendId"],
-      },
-      fullName: {
-        type: String,
-        required: [true, "Friend must have fullName"],
-      },
-      email: {
-        type: String,
-        required: [true, "Friend must have email"],
-      },
-      avatarImg: {
-        type: String,
-        required: [true, "Friend must have avatarImg"],
-        default: "https://www.w3schools.com/howto/img_avatar.png",
-      },
-      status: {
-        type: String,
-        enum: ["pending", "accepted"],
-        default: "pending",
-      },
-    },
-  ],
-  notifications: [
-    {
-      senderId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Notification",
-      },
-      message: {
-        type: String,
-        required: [true, "Notification must have a message"],
-      },
-      avatarImg: {
-        type: String,
-        required: [true, "Notification must have an avatarImg"],
-      },
-      type: {
-        type: Number,
-        enums: [
-          0, //'friend request',
-          1, //'accepted friend request'
-          2, //'request money',
-          3, //'sent money',
-        ],
-      },
-    },
-  ],
 });
 
 //between getting the data and saving it

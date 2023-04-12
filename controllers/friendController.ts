@@ -4,14 +4,22 @@ import { ObjectId } from "mongodb";
 import User from "../models/userModel";
 import { createNotification } from "./notificationController";
 import notificationEnum from "../enums/notificationEnum";
+import Notification from "../models/NotificationModel";
+import Friend from "../models/friendModel";
+import friendEnum from "../enums/friendEnum";
 
 const getUserFriends = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const friendsList = await User.findById(userId).select("friends");
+    const friendsList = await Friend.find({
+      $or: [{ requesterId: userId }, { recipientId: userId }],
+      //todo decide from where data is taken
+    }).populate("recipientId");
+
     res.status(200).json({ status: "success", data: friendsList });
   } catch (error) {
     res.status(400).json({ status: "fail", message: error });
+    console.log(error);
   }
 };
 
@@ -20,56 +28,19 @@ const sendFriendRequest = async (req: Request, res: Response) => {
     const { userId } = req.params;
     const { friendId } = req.body;
 
-    // luam informatiile de la cel care trimite
-    const sender = await User.findById(userId, "_id fullName email avatarImg");
-    // luam informatiile de la cel care primeste
-    const receiver = await User.findById(
-      friendId,
-      "_id fullName email avatarImg"
-    );
-    console.log(sender, receiver);
+    //query for adding friend to Friends Document
+    const newFriend = await Friend.create({
+      requesterId: userId,
+      recipientId: friendId,
+      status: friendEnum.requested,
+    });
 
-    // patch request for updating friend list for sender
-    await User.findByIdAndUpdate(
-      userId,
-      // bagam datele in request
-      {
-        $push: {
-          friends: {
-            friendId: receiver?._id,
-            fullName: receiver?.fullName,
-            email: receiver?.email,
-            avatarImg: receiver?.avatarImg,
-          },
-        },
-      },
-      { new: true }
-    );
+    //todo send notification for user that receives friend request
 
-    // patch request for updating friend list for receiver
-    await User.findByIdAndUpdate(
-      friendId,
-      {
-        //bagam datele in request
-        $push: { friends: sender },
-      },
-      { new: true }
-    );
-
-    const notificationMessage = `${sender?.fullName} want to add you to friend list`;
-    if (sender) {
-      createNotification(
-        friendId,
-        //@ts-ignore
-        sender._id,
-        notificationMessage,
-        sender?.avatarImg,
-        notificationEnum.friendRequest
-      );
-    }
     res.status(200).json({
       status: "success",
-      message: `Friend request sent successfully to ${receiver!.fullName}`,
+      message: `Friend request sent successfully}`,
+      newFriend,
     });
   } catch (error) {
     console.log(error);
@@ -127,6 +98,16 @@ const acceptFriendRequest = async (req: Request, res: Response) => {
         notificationEnum.acceptedFriendRequest
       );
     }
+
+    //delete notification for user that accepts the friend request
+    // todo change with correct query for notification document
+    // await User.findByIdAndUpdate(
+    //     {
+    //       _id: userId,
+    //       notifications: {$elemMatch: {_id: notificationId}},
+    //     },
+    //     {$pull: {notifications: {_id: notificationId}}}
+    // );
 
     res
       .status(200)

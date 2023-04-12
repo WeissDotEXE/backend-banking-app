@@ -9,8 +9,16 @@ interface FriendDocument extends Document {
 
 const friendsSchema = new Schema(
   {
-    requester: { type: Schema.Types.ObjectId, ref: "Users" },
-    recipient: { type: Schema.Types.ObjectId, ref: "Users" },
+    requesterId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "Friend must have a requesterId"],
+    },
+    recipientId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "Friend must have a recipientId"],
+    },
     status: {
       type: Number,
       enums: [
@@ -19,6 +27,8 @@ const friendsSchema = new Schema(
         2, //'pending',
         3, //'friends'
       ],
+      required: [true, "Friend must have a status"],
+      default: 0,
     },
   },
   { timestamps: true }
