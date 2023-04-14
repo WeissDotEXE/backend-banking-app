@@ -1,8 +1,6 @@
 import {Request, Response, NextFunction} from "express";
-import mongoose from "mongoose";
 import {ObjectId} from "mongodb";
 import User from "../models/userModel";
-import {createNotification} from "./notificationController";
 import notificationEnum from "../enums/notificationEnum";
 import Notification from "../models/NotificationModel";
 import Friend from "../models/friendModel";
@@ -52,52 +50,42 @@ const sendFriendRequest = async (req: Request, res: Response) => {
 /*
 WARNING be careful who accepts it
 because both users can do it for now
-TODO implement acceptFriend Request and change
- "pending" to "accepted"
 */
+
+//only recipient user can accept friend request
 const acceptFriendRequest = async (req: Request, res: Response) => {
     try {
-        const {userId} = req.params;
         const {friendId} = req.body;
+        const {userId} = req.params;
 
-        const friend = await User.findById(
-            friendId,
-            "_id fullName email avatarImg"
-        );
+        const friend = await Friend.updateOne({recipientId: userId, requesterId: friendId}, {
+            $set:
+                {
+                    status: friendEnum.friends
+                }
+        })
+        console.log(friendId, userId)
+        console.log(friend)
 
-        const acceptFriendRequestNotification = {
-            senderId: friend?._id,
-            message: `${friend?.fullName} has accepted your friend request`,
-            avatarImg: friend?.avatarImg,
-            type: 1, //'friend request accepted'
-        };
-
-        // Update the status of the specified friend in the user's friends array
-        // for both users (receiver and sender)
-        await User.updateOne(
-            {_id: userId, friends: {$elemMatch: {id: friendId}}},
-            {$set: {"friends.$.status": "accepted"}},
-            {new: true}
-        );
-
-        await User.updateOne(
-            {_id: friendId, friends: {$elemMatch: {id: userId}}},
-            {$set: {"friends.$.status": "accepted"}},
-            {new: true}
-        );
-
-        //send notification to sender when receiver accepts the request
-        const notificationMessage = `${friend?.fullName} has accepted your friend request`;
-        if (friend) {
-            createNotification(
-                //@ts-ignore
-                userId,
-                friend?._id,
-                notificationMessage,
-                friend?.avatarImg,
-                notificationEnum.acceptedFriendRequest
-            );
-        }
+        // const acceptFriendRequestNotification = {
+        //     senderId: friend?._id,
+        //     message: `${friend?.fullName} has accepted your friend request`,
+        //     avatarImg: friend?.avatarImg,
+        //     type: 1, //'friend request accepted'
+        // };
+        //
+        // //send notification to sender when receiver accepts the request
+        // const notificationMessage = `${friend?.fullName} has accepted your friend request`;
+        // if (friend) {
+        //     createNotification(
+        //         //@ts-ignore
+        //         userId,
+        //         friend?._id,
+        //         notificationMessage,
+        //         friend?.avatarImg,
+        //         notificationEnum.acceptedFriendRequest
+        //     );
+        // }
 
         //delete notification for user that accepts the friend request
         // todo change with correct query for notification document
