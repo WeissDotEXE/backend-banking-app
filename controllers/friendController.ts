@@ -1,11 +1,10 @@
-import {Request, Response, NextFunction} from "express";
+import {Request, Response} from "express";
 import {ObjectId} from "mongodb";
 import User from "../models/userModel";
-import notificationEnum from "../enums/notificationEnum";
 import Notification from "../models/NotificationModel";
 import Friend from "../models/friendModel";
 import friendEnum from "../enums/friendEnum";
-import NotificationEnum from "../enums/notificationEnum";
+import notificationEnum from "../enums/notificationEnum";
 
 const getUserFriends = async (req: Request, res: Response) => {
     try {
@@ -36,13 +35,13 @@ const sendFriendRequest = async (req: Request, res: Response) => {
 
         const senderData = await User.findById({_id: userId}).select("_id fullName avatarImg");
 
-        //todo send notification for user that receives friend request
+
         await Notification.create({
             senderId: userId,
             receiverId: friendId,
             message: `${senderData!.fullName} wants you to be friend.`,
             avatarImg: senderData!.avatarImg,
-            type: NotificationEnum.friendRequest
+            type: notificationEnum.friendRequest
         })
 
         res.status(200).json({
@@ -66,7 +65,7 @@ because both users can do it for now
 const acceptFriendRequest = async (req: Request, res: Response) => {
     try {
         const {friendId} = req.body;
-        const {userId} = req.params;
+        const {userId, notificationId} = req.params;
 
         const friend = await Friend.updateOne({recipientId: userId, requesterId: friendId}, {
             $set:
@@ -97,7 +96,8 @@ const acceptFriendRequest = async (req: Request, res: Response) => {
         //     );
         // }
 
-        //delete notification for user that accepts the friend request
+
+        await Notification.findByIdAndDelete(notificationId);
         // todo change with correct query for notification document
         // await User.findByIdAndUpdate(
         //     {

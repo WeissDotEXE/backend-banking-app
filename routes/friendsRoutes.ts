@@ -15,13 +15,11 @@ const router = express.Router();
 
 router.route("/sendFriendRequest/:userId").patch(
     protect,
-    //todo uncomment and resolver this middleware
-    //for checking in friend document
-    // existingFriend,
+    existingFriend,
     sendFriendRequest
 );
 router
-    .route("/acceptFriendRequest/:userId")
+    .route("/acceptFriendRequest/:userId/:notificationId")
     .patch(protect, acceptFriendRequest);
 
 router.route("/getFriends/:userId").get(protect, getUserFriends);
