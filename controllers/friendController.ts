@@ -5,6 +5,7 @@ import notificationEnum from "../enums/notificationEnum";
 import Notification from "../models/NotificationModel";
 import Friend from "../models/friendModel";
 import friendEnum from "../enums/friendEnum";
+import NotificationEnum from "../enums/notificationEnum";
 
 const getUserFriends = async (req: Request, res: Response) => {
     try {
@@ -33,7 +34,16 @@ const sendFriendRequest = async (req: Request, res: Response) => {
             status: friendEnum.requested,
         });
 
+        const senderData = await User.findById({_id: userId}).select("_id fullName avatarImg");
+
         //todo send notification for user that receives friend request
+        await Notification.create({
+            senderId: userId,
+            receiverId: friendId,
+            message: `${senderData!.fullName} wants you to be friend.`,
+            avatarImg: senderData!.avatarImg,
+            type: NotificationEnum.friendRequest
+        })
 
         res.status(200).json({
             status: "success",
