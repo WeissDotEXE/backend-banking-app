@@ -23,5 +23,5 @@ router
     .patch(protect, acceptFriendRequest);
 
 router.route("/getFriends/:userId").get(protect, getUserFriends);
-router.route("/deleteFriend/:userId").delete(protect, deleteFriend);
+router.route("/deleteFriend/:documentId").delete(protect, deleteFriend);
 export default router;

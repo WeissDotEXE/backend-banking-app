@@ -1,5 +1,4 @@
 import {Request, Response} from "express";
-import {ObjectId} from "mongodb";
 import User from "../models/userModel";
 import Notification from "../models/NotificationModel";
 import Friend from "../models/friendModel";
@@ -115,27 +114,16 @@ const acceptFriendRequest = async (req: Request, res: Response) => {
     }
 };
 
+/*todo implement decline friend request controller
+*  when user decline friend request from notification
+*  delete friend from Friends document and notification aswell*/
+
+
 //this request delete users in both lists (receiver & sender)
 const deleteFriend = async (req: Request, res: Response) => {
     try {
-        const {friendId} = req.body;
-        const {userId} = req.params;
-
-        //request for deleting user from requester friend list
-        await User.findByIdAndUpdate(
-            userId,
-            //@ts-ignore
-            {$pull: {friends: friendId}},
-            {new: true}
-        );
-
-        //request for deleting user from receiver friend list
-        await User.findByIdAndUpdate(
-            friendId,
-            //@ts-ignore
-            {$pull: {friends: ObjectId(userId)}},
-            {new: true}
-        );
+        const {documentId} = req.params;
+        await Friend.findByIdAndDelete({_id: documentId});
 
         res.status(204).json({
             status: "success",
