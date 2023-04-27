@@ -13,10 +13,6 @@ const notificationModel = new mongoose.Schema({
         type: String,
         required: [true, "Notification must have a message"],
     },
-    avatarImg: {
-        type: String,
-        required: [true, "Notification mush have an avatarImg"]
-    },
     type: {
         type: Number,
         required: [true, "Notification must have a type"]

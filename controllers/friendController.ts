@@ -39,7 +39,6 @@ const sendFriendRequest = async (req: Request, res: Response) => {
             senderId: userId,
             receiverId: friendId,
             message: `${senderData!.fullName} wants you to be friend.`,
-            avatarImg: senderData!.avatarImg,
             type: notificationEnum.friendRequest
         })
 
