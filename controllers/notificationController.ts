@@ -46,26 +46,19 @@ const getAllNotifications = async (req: Request, res: Response) => {
 //success
 const deleteOneNotification = async (req: Request, res: Response) => {
     try {
-        const {userId, notificationId} = req.params;
-        const deletedNotification = await User.findByIdAndUpdate(
-            {
-                _id: userId,
-                notifications: {$elemMatch: {_id: notificationId}},
-            },
-            {$pull: {notifications: {_id: notificationId}}}
-        );
+        const {notificationId} = req.params;
+        const deletedNotification = await Notification.findByIdAndDelete({_id: notificationId})
         res.status(204).json({message: "succes", data: deletedNotification});
     } catch (error) {
         res.status(400).json({status: "fail", message: error});
     }
 };
 
+//success
 const deleteAllNotifications = async (req: Request, res: Response) => {
     try {
-        const {userId} = req.params;
-        const deletedNotifications = await User.findByIdAndUpdate(userId, {
-            $pull: {notifications: {}},
-        });
+        const {receiverId} = req.params;
+        const deletedNotifications = await Notification.deleteMany({receiverId})
         res.status(204).json({status: "success", deletedNotifications});
     } catch (error) {
         res.status(400).json({status: "fail", message: error});
