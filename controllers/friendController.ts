@@ -10,6 +10,7 @@ const getUserFriends = async (req: Request, res: Response) => {
         const {userId} = req.params;
         const friendsList = await Friend.find({
             $or: [{requesterId: userId}, {recipientId: userId}],
+            status: 2
         }).populate("recipientId requesterId");
 
 
@@ -112,11 +113,6 @@ const acceptFriendRequest = async (req: Request, res: Response) => {
         res.status(400).json({status: "fail", message: error});
     }
 };
-
-/*todo implement decline friend request controller
-*  when user decline friend request from notification
-*  delete friend from Friends document and notification aswell*/
-
 
 //this request delete users in both lists (receiver & sender)
 const deleteFriend = async (req: Request, res: Response) => {

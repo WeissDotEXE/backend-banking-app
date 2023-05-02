@@ -4,10 +4,12 @@ const notificationModel = new mongoose.Schema({
     senderId: {
         type: mongoose.Schema.Types.ObjectId,
         required: [true, "Notification must have a senderId"],
+        ref: "User"
     },
     receiverId: {
         type: mongoose.Schema.Types.ObjectId,
         required: [true, "Notification must have a receiverId"],
+        ref: "User"
     },
     message: {
         type: String,

@@ -13,9 +13,10 @@ const router = express.Router();
 //patch schimba doar unde-i nevoie
 //put schimba tot ( trebuie dati toti parametrii in body)
 
+//todo test existingFriend middleware
 router.route("/sendFriendRequest/:userId").patch(
     protect,
-    existingFriend,
+    // existingFriend,
     sendFriendRequest
 );
 router
