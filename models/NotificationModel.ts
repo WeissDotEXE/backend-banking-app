@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const notificationModel = new mongoose.Schema({
+    friendDocumentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Friend"
+    },
     senderId: {
         type: mongoose.Schema.Types.ObjectId,
         required: [true, "Notification must have a senderId"],

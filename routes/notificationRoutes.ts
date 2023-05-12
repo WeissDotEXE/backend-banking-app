@@ -4,7 +4,7 @@ import {protect} from "../controllers/authController";
 import {
     getAllNotifications,
     deleteOneNotification,
-    deleteAllNotifications,
+    deleteAllNotifications, declineFriendRequestNotification,
 } from "../controllers/notificationController";
 
 const router = express.Router();
@@ -13,6 +13,7 @@ router.route("/:userId").get(protect, getAllNotifications);
 router
     .route("/deleteone/:notificationId")
     .delete(protect, deleteOneNotification);
+router.route("/declineFriendRequest").delete(protect, declineFriendRequestNotification);
 router.route("/deleteall/:receiverId").delete(protect, deleteAllNotifications);
 
 export default router;

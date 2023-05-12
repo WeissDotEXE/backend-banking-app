@@ -37,6 +37,7 @@ const sendFriendRequest = async (req: Request, res: Response) => {
 
 
         await Notification.create({
+            friendDocumentId: await newFriend._id,
             senderId: userId,
             receiverId: friendId,
             message: `${senderData!.fullName} wants you to be friend.`,
@@ -47,6 +48,7 @@ const sendFriendRequest = async (req: Request, res: Response) => {
             status: "success",
             message: `Friend request sent successfully}`,
             newFriend,
+            
         });
     } catch (error) {
         console.log(error);
@@ -63,17 +65,16 @@ because both users can do it for now
 //only recipient user can accept friend request
 const acceptFriendRequest = async (req: Request, res: Response) => {
     try {
-        const {friendId} = req.body;
-        const {userId, notificationId} = req.params;
+        const {requesterId} = req.body;
+        const {recipientId} = req.params;
 
-        const friend = await Friend.updateOne({recipientId: userId, requesterId: friendId}, {
+        await Friend.updateOne({recipientId, requesterId}, {
             $set:
                 {
                     status: friendEnum.friends
                 }
         })
-        console.log(friendId, userId)
-        console.log(friend)
+        console.log(requesterId, recipientId)
 
         // const acceptFriendRequestNotification = {
         //     senderId: friend?._id,
@@ -95,8 +96,6 @@ const acceptFriendRequest = async (req: Request, res: Response) => {
         //     );
         // }
 
-
-        await Notification.findByIdAndDelete(notificationId);
         // todo change with correct query for notification document
         // await User.findByIdAndUpdate(
         //     {

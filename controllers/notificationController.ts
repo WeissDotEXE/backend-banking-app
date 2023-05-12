@@ -2,6 +2,7 @@ import {Request, Response} from "express";
 import Notification from "../models/NotificationModel";
 import User from "../models/userModel";
 import mongoose from "mongoose";
+import Friend from "../models/friendModel";
 
 //success
 const createNotification = async (
@@ -36,7 +37,8 @@ const createNotification = async (
 const getAllNotifications = async (req: Request, res: Response) => {
     try {
         const {userId} = req.params;
-        const notifications = await Notification.find({receiverId: userId}).populate("senderId").select("fullName avatarImg _id message type");
+        const notifications = await Notification.find({receiverId: userId}).populate("senderId")
+            .select("fullName avatarImg _id message type friendDocumentId");
         res.status(200).json({status: "success", data: notifications});
     } catch (error) {
         res.status(400).json({status: "fail", message: error});
@@ -65,9 +67,25 @@ const deleteAllNotifications = async (req: Request, res: Response) => {
     }
 };
 
+const declineFriendRequestNotification = async (req: Request, res: Response) => {
+    try {
+        const {friendDocumentId, notificationId} = req.body;
+
+        await Friend.findByIdAndDelete({_id: friendDocumentId});
+
+        //delete notification after deleting friendRequest
+        await Notification.findByIdAndDelete({_id: notificationId});
+        res.status(204).json({status: "succes", message: "Friend request declined"})
+
+    } catch (error) {
+        res.status(400).json({status: "fail", message: error})
+    }
+}
+
 export {
     createNotification,
     getAllNotifications,
     deleteOneNotification,
     deleteAllNotifications,
+    declineFriendRequestNotification
 };

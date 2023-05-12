@@ -20,7 +20,7 @@ router.route("/sendFriendRequest/:userId").patch(
     sendFriendRequest
 );
 router
-    .route("/acceptFriendRequest/:userId/:notificationId")
+    .route("/acceptFriendRequest/:recipientId")
     .patch(protect, acceptFriendRequest);
 
 router.route("/getFriends/:userId").get(protect, getUserFriends);
