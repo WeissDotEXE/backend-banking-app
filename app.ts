@@ -1,15 +1,14 @@
-import express, {json, NextFunction} from "express";
+import express from "express";
 import authRouter from "./routes/authRoutes";
 import bankingCardRouter from "./routes/bankingCardRoutes";
 import transactionRouter from "./routes/transactionRoutes";
 import userRouter from "./routes/userRoutes";
 import notificationRouter from "./routes/notificationRoutes";
 import friendsRouter from "./routes/friendsRoutes";
-import validUserId from "./middleware/checkUserId";
 import cors from "cors";
 
-import path from "path";
 import morgan from "morgan";
+import searchUsersRoutes from "./routes/searchUsersRoutes";
 
 const app = express();
 app.use(cors());
@@ -30,5 +29,6 @@ app.use("/api/v1/transaction", transactionRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/notification", notificationRouter);
 app.use("/api/v1/friends", friendsRouter);
+app.use("/api/v1/searchusers", searchUsersRoutes)
 
 export default app;
