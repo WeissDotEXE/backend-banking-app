@@ -44,11 +44,17 @@ const sendFriendRequest = async (req: Request, res: Response) => {
             type: notificationEnum.friendRequest
         })
 
+        // //add friendId & status in user's friends document
+        // await User.findOneAndUpdate(
+        //     { _id: userId },
+        //     { $push: { friends: {friendId,status:friendEnum.requested} }}
+        // )
+
         res.status(200).json({
             status: "success",
             message: `Friend request sent successfully}`,
             newFriend,
-            
+
         });
     } catch (error) {
         console.log(error);
@@ -75,35 +81,6 @@ const acceptFriendRequest = async (req: Request, res: Response) => {
                 }
         })
         console.log(requesterId, recipientId)
-
-        // const acceptFriendRequestNotification = {
-        //     senderId: friend?._id,
-        //     message: `${friend?.fullName} has accepted your friend request`,
-        //     avatarImg: friend?.avatarImg,
-        //     type: 1, //'friend request accepted'
-        // };
-        //
-        // //send notification to sender when receiver accepts the request
-        // const notificationMessage = `${friend?.fullName} has accepted your friend request`;
-        // if (friend) {
-        //     createNotification(
-        //         //@ts-ignore
-        //         userId,
-        //         friend?._id,
-        //         notificationMessage,
-        //         friend?.avatarImg,
-        //         notificationEnum.acceptedFriendRequest
-        //     );
-        // }
-
-        // todo change with correct query for notification document
-        // await User.findByIdAndUpdate(
-        //     {
-        //       _id: userId,
-        //       notifications: {$elemMatch: {_id: notificationId}},
-        //     },
-        //     {$pull: {notifications: {_id: notificationId}}}
-        // );
 
         res
             .status(200)
