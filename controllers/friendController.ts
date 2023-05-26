@@ -21,47 +21,48 @@ const getUserFriends = async (req: Request, res: Response) => {
     }
 };
 
-const sendFriendRequest = async (req: Request, res: Response) => {
-    try {
-        const {userId} = req.params;
-        const {friendId} = req.body;
+const
+    sendFriendRequest = async (req: Request, res: Response) => {
+        try {
+            const {userId} = req.params;
+            const {friendId} = req.body;
 
-        //query for adding friend to Friends Document
-        const newFriend = await Friend.create({
-            requesterId: userId,
-            recipientId: friendId,
-            status: friendEnum.requested,
-        });
+            //query for adding friend to Friends Document
+            const newFriend = await Friend.create({
+                requesterId: userId,
+                recipientId: friendId,
+                status: friendEnum.requested,
+            });
 
-        const senderData = await User.findById({_id: userId}).select("_id fullName avatarImg");
+            const senderData = await User.findById({_id: userId}).select("_id fullName avatarImg");
 
 
-        await Notification.create({
-            friendDocumentId: await newFriend._id,
-            senderId: userId,
-            receiverId: friendId,
-            message: `${senderData!.fullName} wants you to be friend.`,
-            type: notificationEnum.friendRequest
-        })
+            await Notification.create({
+                friendDocumentId: await newFriend._id,
+                senderId: userId,
+                receiverId: friendId,
+                message: `${senderData!.fullName} wants you to be friend.`,
+                type: notificationEnum.friendRequest
+            })
 
-        // //add friendId & status in user's friends document
-        // await User.findOneAndUpdate(
-        //     { _id: userId },
-        //     { $push: { friends: {friendId,status:friendEnum.requested} }}
-        // )
+            // //add friendId & status in user's friends document
+            // await User.findOneAndUpdate(
+            //     { _id: userId },
+            //     { $push: { friends: {friendId,status:friendEnum.requested} }}
+            // )
 
-        res.status(200).json({
-            status: "success",
-            message: `Friend request sent successfully}`,
-            newFriend,
+            res.status(200).json({
+                status: "success",
+                message: `Friend request sent successfully}`,
+                newFriend,
 
-        });
-    } catch (error) {
-        console.log(error);
+            });
+        } catch (error) {
+            console.log(error);
 
-        res.status(400).json({status: "fail", message: error});
-    }
-};
+            res.status(400).json({status: "fail", message: error});
+        }
+    };
 
 /*
 WARNING be careful who accepts it

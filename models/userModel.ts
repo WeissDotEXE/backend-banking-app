@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import generateRandomIban from "../utils/generateRandomIban";
 
 interface UserDocument extends Document {
     id: mongoose.Schema.Types.ObjectId;
@@ -64,6 +65,7 @@ const userSchema = new mongoose.Schema({
     iban: {
         type: String,
         length: 16,
+        default: generateRandomIban
     },
     joinDate: {
         type: Date,
