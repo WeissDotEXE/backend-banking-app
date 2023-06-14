@@ -1,24 +1,31 @@
-import mongoose from "mongoose";
+import mongoose, {Document, Schema} from "mongoose";
 import generateRandomCVV from "../utils/generateRandomCVV";
 import generateRandomCardNumber from "../utils/generateRandomCardNumber";
 import generateCardExpireDate from "../utils/generateCardExpireDate";
+import {NextFunction} from "express";
 
-const bankingCardModel = new mongoose.Schema({
+interface IBankingCard extends Document {
+    cardNumber: number;
+    expireDate: Date;
+    cvv: number;
+    type: number;
+    color: number;
+    createdAt: Date;
+    userId: mongoose.Types.ObjectId;
+}
+
+const bankingCardSchema = new Schema<IBankingCard>({
     cardNumber: {
         type: Number,
         length: 16,
         unique: true,
-        default: generateRandomCardNumber
     },
     expireDate: {
         type: Date,
-        required: [true, "Banking card must have an expire Date"],
-        default: generateCardExpireDate
     },
     cvv: {
         type: Number,
         length: 3,
-        default: generateRandomCVV
     },
     type: {
         type: Number,
@@ -31,13 +38,22 @@ const bankingCardModel = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now(),
-        selected: false,
+        select: false,
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        required: [true, "Banking app must have an userId"],
+        required: [true, "Banking app must have a userId"],
     },
 });
 
-const BankingCard = mongoose.model("BankingCard", bankingCardModel);
+// @ts-ignore
+bankingCardSchema.pre<IBankingCard>('save', async function (next: NextFunction) {
+    this.cardNumber = generateRandomCardNumber();
+    this.expireDate = generateCardExpireDate();
+    this.cvv = generateRandomCVV();
+    next();
+});
+
+const BankingCard = mongoose.model<IBankingCard>("BankingCard", bankingCardSchema);
+
 export default BankingCard;

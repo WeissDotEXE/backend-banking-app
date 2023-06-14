@@ -7,7 +7,7 @@ const generateRandomCVV = () => {
         result += characters.charAt(randomIndex);
     }
 
-    return result;
+    return Number(result);
 };
 
-export default generateRandomCVV()
+export default generateRandomCVV

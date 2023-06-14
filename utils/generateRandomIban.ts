@@ -10,4 +10,4 @@ const generateRandomIban = (): string => {
     return result;
 }
 
-export default generateRandomIban()
+export default generateRandomIban;

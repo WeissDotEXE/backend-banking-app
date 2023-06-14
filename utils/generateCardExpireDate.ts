@@ -4,4 +4,4 @@ const generateCardExpireDate = (): Date => {
 
 }
 
-export default generateCardExpireDate()
+export default generateCardExpireDate;

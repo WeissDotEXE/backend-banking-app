@@ -8,6 +8,6 @@ const generateRandomCardNumber = (): number => {
     }
 
     return Number(result);
-}
+};
 
-export default generateRandomCardNumber()
+export default generateRandomCardNumber;
