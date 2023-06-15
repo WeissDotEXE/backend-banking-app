@@ -17,9 +17,9 @@ const transactionModel = new mongoose.Schema({
         type: Date,
         default: Date.now(),
     },
-    amount: {
+    balance: {
         type: Number,
-        required: [true, "Transaction must have an amount"],
+        required: [true, "Transaction must have an balance"],
     },
     currency: {
         type: String,

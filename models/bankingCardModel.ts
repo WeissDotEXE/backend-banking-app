@@ -3,6 +3,7 @@ import generateRandomCVV from "../utils/generateRandomCVV";
 import generateRandomCardNumber from "../utils/generateRandomCardNumber";
 import generateCardExpireDate from "../utils/generateCardExpireDate";
 import {NextFunction} from "express";
+import User from "./userModel";
 
 interface IBankingCard extends Document {
     cardNumber: number;
@@ -29,11 +30,11 @@ const bankingCardSchema = new Schema<IBankingCard>({
     },
     type: {
         type: Number,
-        required: [true, "Banking app must have a type"],
+        required: [true, "Banking card must have a type"],
     },
     color: {
         type: Number,
-        required: [true, "Banking app must have a payment color"],
+        required: [true, "Banking card must have a payment color"],
     },
     createdAt: {
         type: Date,
@@ -43,6 +44,7 @@ const bankingCardSchema = new Schema<IBankingCard>({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         required: [true, "Banking app must have a userId"],
+        ref: "User"
     },
 });
 

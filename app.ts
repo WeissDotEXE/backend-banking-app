@@ -8,7 +8,8 @@ import friendsRouter from "./routes/friendsRoutes";
 import cors from "cors";
 
 import morgan from "morgan";
-import searchUsersRoutes from "./routes/searchUsersRoutes";
+import searchUsersRouter from "./routes/searchUsersRoutes";
+import bankingAccountsRouter from "./routes/bankingAccountsRoutes";
 
 const app = express();
 app.use(cors());
@@ -29,6 +30,7 @@ app.use("/api/v1/transaction", transactionRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/notification", notificationRouter);
 app.use("/api/v1/friends", friendsRouter);
-app.use("/api/v1/searchusers", searchUsersRoutes)
+app.use("/api/v1/searchusers", searchUsersRouter)
+app.use("/api/v1/bankingaccounts", bankingAccountsRouter)
 
 export default app;

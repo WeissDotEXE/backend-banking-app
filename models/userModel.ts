@@ -1,8 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, {Schema} from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import generateRandomIban from "../utils/generateRandomIban";
+import currencyEnum from "../enums/currencyEnum";
+import BankingAccountModel from "./bankingAccountModel";
+import BankingCardModel from "./bankingCardModel";
 
 interface UserDocument extends Document {
     id: mongoose.Schema.Types.ObjectId;
@@ -20,6 +23,9 @@ interface UserDocument extends Document {
     friends: {
         friendId: mongoose.Schema.Types.ObjectId;
         status: "pending" | "accepted";
+    }[];
+    bankingAccounts: {
+        id: String
     }[];
 
     correctPassword(candidatePassword: string, userPassword: string): boolean;
@@ -71,6 +77,10 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now(),
     },
+    bankingAccounts: [{
+        type: Schema.Types.ObjectId,
+        ref: "BankingAccount",
+    }]
 });
 
 //between getting the data and saving it
