@@ -30,7 +30,7 @@ app.use("/api/v1/transaction", transactionRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/notification", notificationRouter);
 app.use("/api/v1/friends", friendsRouter);
-app.use("/api/v1/searchusers", searchUsersRouter)
-app.use("/api/v1/bankingaccounts", bankingAccountsRouter)
+app.use("/api/v1/searchUsers", searchUsersRouter)
+app.use("/api/v1/bankingAccounts", bankingAccountsRouter)
 
 export default app;
