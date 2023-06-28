@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import sendEmail from "../utils/email";
 import BankingAccount from "../models/bankingAccountModel";
 import currencyEnum from "../enums/currencyEnum";
+import bcrypt from "bcryptjs";
 
 //might not work, delete if that is the case
 export interface IGetUserAuthInfoRequest extends Request {
@@ -17,7 +18,7 @@ const signToken = (id: mongoose.Types.ObjectId) => {
     });
 };
 
-const register = async (req: Request, res: Response, next: NextFunction) => {
+const register = async (req: Request, res: Response) => {
     try {
         if (req.body.password !== req.body.repeatPassword) {
             res
@@ -49,7 +50,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-const login = async (req: Request, res: Response, next: NextFunction) => {
+const login = async (req: Request, res: Response) => {
     try {
         const {email, password} = req.body;
 
@@ -116,16 +117,6 @@ const protect = async (
                 .status(400)
                 .json({status: "fail", message: "User no longer exists"});
         }
-
-        // //4. Check if user changed password after the JWT was issued
-        // //@ts-ignore
-        // if (freshUser.changedPasswordAfter(decoded.iat)) {
-        //   return res.status(400).json({
-        //     status: "fail",
-        //     message: "User recently changed password! Log in again",
-        //   });
-        // }
-
         //GRANT ACCESS TO PROTECTED ROUTE
         req.user = currentUser;
         next();
@@ -136,8 +127,7 @@ const protect = async (
 
 const forgotPassword = async (
     req: Request,
-    res: Response,
-    next: NextFunction
+    res: Response
 ) => {
     try {
         //1. Get user based on POSTed email
@@ -185,8 +175,42 @@ const forgotPassword = async (
         res.status(400).json({status: "fail", message: error});
     }
 };
+const resetPassword = async (req: Request, res: Response) => {
+    try {
+        // 1. Get user based on the token
+        const user = await User.findOne({
+            passwordResetToken: req.params.token,
+            passwordResetExpires: {$gt: Date.now()}
+        });
 
-const resetPassword = (req: Request, res: Response, next: NextFunction) => {
+        // 2. If token has not expired, and there is user, set the new password
+        if (!user) {
+            return res.status(400).json({status: "fail", message: "Token is invalid or has expired"});
+        }
+
+        // Hash the new password before saving it
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+        user.password = hashedPassword;
+        user.passwordResetToken = undefined;
+        user.passwordResetExpires = undefined;
+        await user.save();
+
+        // 3. Update passwordChangedAt property for the user (this should be done in user model with a pre save middleware)
+
+        // 4. Log the user in, send JWT
+        const token = signToken(user._id);
+        res.status(200).json({
+            status: "success",
+            token,
+            data: user,
+        });
+
+    } catch (error) {
+        res.status(400).json({status: "fail", message: error});
+    }
 };
+
 
 export {register, login, protect, forgotPassword, resetPassword};
