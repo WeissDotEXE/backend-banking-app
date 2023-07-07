@@ -36,8 +36,8 @@ const sendMoney = async (req: Request, res: Response) => {
     try {
         const {amount, userBalance, recipientBalance, userAccountId, recipientAccountId} = req.body;
 
-        const finalUserBalance = userBalance - amount;
-        const finalRecipientBalance = recipientBalance + amount;
+        const finalUserBalance: number = userBalance - amount;
+        const finalRecipientBalance: number = recipientBalance + amount;
         console.log(userBalance, recipientBalance);
 
         // Deduct money from the user who sends money
