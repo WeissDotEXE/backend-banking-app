@@ -1,5 +1,7 @@
 import BankingAccount from "../models/bankingAccountModel";
 import {Response, Request} from "express";
+import Transaction from "../models/TransactionModel";
+import transactionEnum from "../enums/transactionEnum";
 
 const getBankingAccounts = async (req: Request, res: Response) => {
     try {
@@ -14,27 +16,28 @@ const getBankingAccounts = async (req: Request, res: Response) => {
 
 const addMoney = async (req: Request, res: Response) => {
     try {
-        const {accountId} = req.params;
-        const {amount, balance} = req.body
+        const {accountId} = req.params
+        const {amount, balance, receiverUserId, currency} = req.body;
 
         const finalBalance = balance + amount;
-        //add money to banking account based on its _id
+
+        // Update the balance of the banking account based on its _id
         await BankingAccount.updateOne({_id: accountId}, {
-            $set: {
-                balance: finalBalance
-            }
-        })
+            $set: {balance: finalBalance}
+        });
 
-        res.status(200).json({status: "success", message: `You added ${amount} money`})
+        // Create a new transaction record
+        await Transaction.create({amount, type: transactionEnum.deposit, receiverId: receiverUserId, currency});
 
+        res.status(200).json({status: 'success', message: `You added ${amount} money`});
     } catch (error) {
-        res.status(400).json({status: "fail", message: error})
+        res.status(400).json({status: 'fail', message: error});
     }
-}
+};
 
 const sendMoney = async (req: Request, res: Response) => {
     try {
-        const {amount, userBalance, recipientBalance, userAccountId, recipientAccountId} = req.body;
+        const {amount, userBalance, recipientBalance, userAccountId, recipientAccountId, currency} = req.body;
 
         const finalUserBalance: number = userBalance - amount;
         const finalRecipientBalance: number = recipientBalance + amount;
@@ -55,6 +58,14 @@ const sendMoney = async (req: Request, res: Response) => {
                     balance: finalRecipientBalance
                 }
         });
+
+        await Transaction.create({
+            amount,
+            type: transactionEnum.userTransaction,
+            receiverId: recipientAccountId,
+            senderId: userAccountId,
+            currency
+        })
 
         res.status(200).json({
             status: "success",

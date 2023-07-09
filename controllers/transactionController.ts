@@ -1,19 +1,33 @@
 import Transaction from "../models/TransactionModel";
-import {Response, Request} from "express";
+import {Request, Response} from "express";
 import transactionEnum from "../enums/transactionEnum";
+import receiverRecipientEnum from "../enums/receiverRecipientEnum";
 
 const getTransactions = async (req: Request, res: Response) => {
     try {
         const {userId} = req.params;
-        const transactions = await Transaction.find({receiverId: userId});
+        const transactions = await Transaction.find({
+            $or: [{receiverId: userId}, {senderId: userId}],
+        });
+
         if (transactions.length === 0) {
-            return res
-                .status(200)
-                .json({status: "success", message: "No transactions"});
+            return res.status(200).json({status: 'success', message: 'No transactions'});
         }
-        res.status(200).json({status: "success", data: transactions});
+
+        const updatedTransactions = transactions.map((doc: any) => {
+            if (doc.type === transactionEnum.deposit) {
+                return doc.toObject(); // Convert Mongoose document to plain JavaScript object
+            }
+
+            const fieldFound =
+                doc.receiverId.toString() === userId.toString() ? receiverRecipientEnum.recipient : receiverRecipientEnum.receiver;
+
+            return {...doc.toObject(), fieldFound};
+        });
+
+        res.status(200).json({status: 'success', data: updatedTransactions});
     } catch (error) {
-        res.status(400).json({status: "fail", message: error});
+        res.status(400).json({status: 'fail', message: error});
     }
 };
 
