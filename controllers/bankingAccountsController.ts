@@ -43,6 +43,13 @@ const sendMoney = async (req: Request, res: Response) => {
         const finalRecipientBalance: number = recipientBalance + amount;
         console.log(userBalance, recipientBalance);
 
+        if (userBalance < amount) {
+            return res.status(400).json({
+                status: "fail",
+                message: "Insufficient balance"
+            });
+        }
+
         // Deduct money from the user who sends money
         await BankingAccount.updateOne({_id: userAccountId}, {
             $set:
