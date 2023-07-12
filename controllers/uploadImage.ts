@@ -41,7 +41,7 @@ const uploadImage = async (req: Request, res: Response) => {
         })
 
         const response = await Image.create(obj)
-        res.status(200).json({status: "success", data: response.name})
+        res.status(200).json({status: "success", data: response})
     } catch (error) {
         res.status(400).json({status: "fail", message: error})
     }
