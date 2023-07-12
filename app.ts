@@ -10,6 +10,7 @@ import bankingAccountsRouter from "./routes/bankingAccountsRoutes";
 import imageUploadRoutes from "./routes/imageUploadRoutes";
 import cors from "cors";
 import morgan from "morgan";
+import bodyParser from "body-parser";
 
 const app = express();
 app.use(cors());
@@ -22,6 +23,9 @@ if (process.env.NODE_ENV === "development") {
 //transform it in a js object
 app.use(morgan("dev")); //
 app.use(express.json());
+// Configure body-parser to handle larger payloads
+app.use(bodyParser.json({limit: '1000mb'}));
+app.use(bodyParser.urlencoded({limit: '1000mb', extended: true}));
 
 //middleware check valid user
 app.use("/api/v1/auth", authRouter);

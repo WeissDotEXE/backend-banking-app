@@ -1,14 +1,8 @@
 import mongoose from "mongoose";
 
 const imageModel = new mongoose.Schema({
-    name: {
-        type: String,
-        required: [true, "Image must have a name"]
-    },
-    image: {
-        data: Buffer,
-        contentType: String
-    }
+    filename: {type: String, required: [true, 'file must have a filename']},
+    originalname: {type: String, required: [true, "file must have an originalname"]}
 })
 
 const Image = mongoose.model("Image", imageModel)
