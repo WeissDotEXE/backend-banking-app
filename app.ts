@@ -5,11 +5,11 @@ import transactionRouter from "./routes/transactionRoutes";
 import userRouter from "./routes/userRoutes";
 import notificationRouter from "./routes/notificationRoutes";
 import friendsRouter from "./routes/friendsRoutes";
-import cors from "cors";
-
-import morgan from "morgan";
 import searchUsersRouter from "./routes/searchUsersRoutes";
 import bankingAccountsRouter from "./routes/bankingAccountsRoutes";
+import imageUploadRoutes from "./routes/imageUploadRoutes";
+import cors from "cors";
+import morgan from "morgan";
 
 const app = express();
 app.use(cors());
@@ -32,5 +32,6 @@ app.use("/api/v1/notification", notificationRouter);
 app.use("/api/v1/friends", friendsRouter);
 app.use("/api/v1/searchUsers", searchUsersRouter)
 app.use("/api/v1/bankingAccounts", bankingAccountsRouter)
+app.use("/api/v1/imageUpload", imageUploadRoutes)
 
 export default app;
