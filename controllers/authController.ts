@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import sendEmail from "../utils/email";
 import BankingAccount from "../models/bankingAccountModel";
-import currencyEnum from "../enums/currencyEnum";
 import bcrypt from "bcryptjs";
 
 //might not work, delete if that is the case
@@ -142,7 +141,7 @@ const forgotPassword = async (
         //2. Generate the random token
         const resetToken = await user?.createPasswordResetToken();
         const response = await user?.save({validateBeforeSave: false});
-        res.status(200).json({response});
+
 
         //3. send it back as an email
         const resetURL = `${req.protocol}://${req.get(
@@ -168,9 +167,7 @@ const forgotPassword = async (
             });
         }
 
-        res
-            .status(200)
-            .json({status: "success", message: "Token sent to email!"});
+        res.status(200).json({response});
     } catch (error) {
         res.status(400).json({status: "fail", message: error});
     }
@@ -211,6 +208,4 @@ const resetPassword = async (req: Request, res: Response) => {
         res.status(400).json({status: "fail", message: error});
     }
 };
-
-
 export {register, login, protect, forgotPassword, resetPassword};

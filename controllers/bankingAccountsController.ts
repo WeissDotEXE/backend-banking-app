@@ -66,18 +66,22 @@ const sendMoney = async (req: Request, res: Response) => {
                 }
         });
 
-        await Transaction.create({
+        const transaction = await Transaction.create({
             amount,
             type: transactionEnum.userTransaction,
             receiverId: recipientAccountId,
             senderId: userAccountId,
             currency
         })
+        if (transaction) {
+            res.status(200).json({
+                status: "success",
+                message: `You sent ${amount}`
+            });
+        } else {
+            res.status(400).json({status: "fail", message: "no transaction"})
+        }
 
-        res.status(200).json({
-            status: "success",
-            message: `You sent ${amount}`
-        });
     } catch (error) {
         res.status(400).json({status: "fail", message: error});
     }

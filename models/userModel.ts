@@ -3,9 +3,6 @@ import validator from "validator";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import generateRandomIban from "../utils/generateRandomIban";
-import currencyEnum from "../enums/currencyEnum";
-import BankingAccountModel from "./bankingAccountModel";
-import BankingCardModel from "./bankingCardModel";
 
 interface UserDocument extends Document {
     id: mongoose.Schema.Types.ObjectId;
@@ -132,6 +129,21 @@ userSchema.methods.createPasswordResetToken = function () {
     this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
     return resetToken;
 };
+
+userSchema.methods.createPasswordResetToken = function () {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    this.passwordResetToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+
+    console.log({resetToken}, this.passwordResetToken)
+
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+    return resetToken;
+}
 
 const User = mongoose.model<UserDocument>("User", userSchema);
 export default User;

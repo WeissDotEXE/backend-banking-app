@@ -1,5 +1,5 @@
 import express from "express";
-import {protect} from "../controllers/authController";
+import {forgotPassword, protect, resetPassword} from "../controllers/authController";
 import {
     getUserName,
     getUserData,
@@ -19,5 +19,8 @@ router.get("/accounts/:userId", protect, getUserAccounts);
 router.get("/friends/:userId", protect, getUserFriends);
 router.get("/transactions/:userId", protect, getUserTransactions);
 router.patch("/editprofile/:userId", protect, editProfile)
+
+router.post("/forgotPassword", forgotPassword);
+router.post('/resetPassword', resetPassword)
 
 export default router;
