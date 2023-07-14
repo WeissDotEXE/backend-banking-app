@@ -53,8 +53,7 @@ const userSchema = new mongoose.Schema({
         select: false,
     },
     repeatPassword: {
-        type: String,
-        required: [true, "User must have a repeatPassword"],
+        type: String
     },
     passwordChangedAt: {
         type: Date,

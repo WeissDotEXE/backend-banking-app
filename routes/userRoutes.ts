@@ -21,6 +21,6 @@ router.get("/transactions/:userId", protect, getUserTransactions);
 router.patch("/editprofile/:userId", protect, editProfile)
 
 router.post("/forgotPassword", forgotPassword);
-router.post('/resetPassword', resetPassword)
+router.patch('/resetPassword/:token', resetPassword)
 
 export default router;

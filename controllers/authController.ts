@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import sendEmail from "../utils/email";
 import BankingAccount from "../models/bankingAccountModel";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 //might not work, delete if that is the case
 export interface IGetUserAuthInfoRequest extends Request {
@@ -144,16 +145,14 @@ const forgotPassword = async (
 
 
         //3. send it back as an email
-        const resetURL = `${req.protocol}://${req.get(
-            "host"
-        )}/api/v1/resetPassword/${resetToken}}`;
+        const resetURL = `${process.env.FRONTEND_APP_URL}/resetPassword/${resetToken}`;
 
-        const message = `Forgot your Password? Submit a patch request with your new password and passwordConfirm to: ${resetURL}\nIf you din't forget your password, please ignore it`;
+        const message = `Forgot your Password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}\n If you didn't forget your password, please ignore it`;
 
         try {
             await sendEmail({
                 email: req.body.email,
-                subject: "Your password reset token (valid for 10 mins",
+                subject: "Your password reset token (valid for 10 mins)",
                 message,
             });
         } catch (err) {
@@ -161,9 +160,9 @@ const forgotPassword = async (
             user.passwordResetExpires = undefined;
             await user.save({validateBeforeSave: false});
 
-            res.status(400).json({
+            res.status(500).json({
                 status: "fail",
-                message: "there was an error, please try again",
+                message: "there was an error sending the email. Please try again",
             });
         }
 
@@ -174,9 +173,14 @@ const forgotPassword = async (
 };
 const resetPassword = async (req: Request, res: Response) => {
     try {
+        const {password} = req.body
         // 1. Get user based on the token
+        const hashedToken = crypto
+            .createHash('sha256')
+            .update(req.params.token)
+            .digest("hex")
         const user = await User.findOne({
-            passwordResetToken: req.params.token,
+            passwordResetToken: hashedToken,
             passwordResetExpires: {$gt: Date.now()}
         });
 
@@ -187,12 +191,12 @@ const resetPassword = async (req: Request, res: Response) => {
 
         // Hash the new password before saving it
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(req.body.password, salt);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
         user.password = hashedPassword;
         user.passwordResetToken = undefined;
-        user.passwordResetExpires = undefined;
-        await user.save();
+        user.passwordResetExpires = undefined
+        await user.save()
 
         // 3. Update passwordChangedAt property for the user (this should be done in user model with a pre save middleware)
 
