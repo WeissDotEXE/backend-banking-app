@@ -79,6 +79,14 @@ const userSchema = new mongoose.Schema({
     }]
 });
 
+userSchema.pre("save", function (next) {
+    if (!this.isModified('password') || this.isNew) return next();
+
+    //@ts-ignore
+    this.passwordChangedAt = Date.now() - 1000;
+    next();
+})
+
 //between getting the data and saving it
 userSchema.pre("save", async function (next) {
     // Only run this function if password was modified

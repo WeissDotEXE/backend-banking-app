@@ -37,11 +37,20 @@ const addMoney = async (req: Request, res: Response) => {
 
 const sendMoney = async (req: Request, res: Response) => {
     try {
-        const {amount, userBalance, recipientBalance, userAccountId, recipientAccountId, currency} = req.body;
+        const {
+            amount,
+            userBalance,
+            receiverBalance,
+            userId,
+            receiverId,
+            currency,
+            userAccountId,
+            receiverAccountId
+        } = req.body;
 
         const finalUserBalance: number = userBalance - amount;
-        const finalRecipientBalance: number = recipientBalance + amount;
-        console.log(userBalance, recipientBalance);
+        const finalReceiverBalance: number = receiverBalance + amount;
+        console.log(userBalance, receiverBalance);
 
         if (userBalance < amount) {
             return res.status(400).json({
@@ -51,32 +60,34 @@ const sendMoney = async (req: Request, res: Response) => {
         }
 
         // Deduct money from the user who sends money
-        await BankingAccount.updateOne({_id: userAccountId}, {
+        const responseUpdateUser = await BankingAccount.updateOne({_id: userAccountId}, {
             $set:
                 {
                     balance: finalUserBalance
                 }
         });
 
-        // Add money to the recipient user
-        await BankingAccount.updateOne({_id: recipientAccountId}, {
+        // Add money to the receiver user
+        const responseUpdateReceiver = await BankingAccount.updateOne({_id: receiverAccountId}, {
             $set:
                 {
-                    balance: finalRecipientBalance
+                    balance: finalReceiverBalance
                 }
         });
 
         const transaction = await Transaction.create({
             amount,
             type: transactionEnum.userTransaction,
-            receiverId: recipientAccountId,
-            senderId: userAccountId,
+            receiverId: receiverId,
+            senderId: userId,
             currency
         })
-        if (transaction) {
+        if (transaction || responseUpdateReceiver || responseUpdateUser) {
             res.status(200).json({
                 status: "success",
-                message: `You sent ${amount}`
+                transaction,
+                responseUpdateReceiver,
+                responseUpdateUser
             });
         } else {
             res.status(400).json({status: "fail", message: "no transaction"})
