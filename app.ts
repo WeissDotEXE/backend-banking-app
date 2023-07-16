@@ -11,6 +11,8 @@ import imageUploadRoutes from "./routes/imageUploadRoutes";
 import cors from "cors";
 import morgan from "morgan";
 import bodyParser from "body-parser";
+import path from "path";
+import generatePdfRoutes from "./routes/generatePdfRoutes";
 
 const app = express();
 app.use(cors());
@@ -27,6 +29,8 @@ app.use(express.json());
 app.use(bodyParser.json({limit: '1000mb'}));
 app.use(bodyParser.urlencoded({limit: '1000mb', extended: true}));
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 //middleware check valid user
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/bankingCards", bankingCardRouter);
@@ -36,6 +40,7 @@ app.use("/api/v1/notification", notificationRouter);
 app.use("/api/v1/friends", friendsRouter);
 app.use("/api/v1/searchUsers", searchUsersRouter)
 app.use("/api/v1/bankingAccounts", bankingAccountsRouter)
-app.use("/api/v1/imageUpload", imageUploadRoutes)
+app.use("/api/v1/image", imageUploadRoutes)
+app.use("/api/v1/generatePdf", generatePdfRoutes)
 
 export default app;
