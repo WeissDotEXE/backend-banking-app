@@ -2,6 +2,8 @@ import Transaction from "../models/TransactionModel";
 import {Request, Response} from "express";
 import transactionEnum from "../enums/transactionEnum";
 import receiverRecipientEnum from "../enums/receiverRecipientEnum";
+import Notification from "../models/NotificationModel";
+import notificationEnum from "../enums/notificationEnum";
 
 const getTransactions = async (req: Request, res: Response) => {
     try {
@@ -59,6 +61,7 @@ const sendTransaction = async (req: Request, res: Response) => {
         }
 
         const newTransaction = await Transaction.create(req.body);
+
         res.status(201).json({
             status: "success",
             data: {

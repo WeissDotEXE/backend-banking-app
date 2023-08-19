@@ -2,6 +2,9 @@ import BankingAccount from "../models/bankingAccountModel";
 import {Response, Request} from "express";
 import Transaction from "../models/TransactionModel";
 import transactionEnum from "../enums/transactionEnum";
+import Notification from "../models/NotificationModel";
+import notificationEnum from "../enums/notificationEnum";
+import User from "../models/userModel";
 
 const getBankingAccounts = async (req: Request, res: Response) => {
     try {
@@ -82,17 +85,30 @@ const sendMoney = async (req: Request, res: Response) => {
             senderId: userId,
             currency
         })
+
+        const userData = await User.findById(userId)
+
+        const notification = await Notification.create({
+            friendDocumentId: receiverId,
+            senderId: userId,
+            receiverId: receiverId,
+            //@ts-ignore
+            message: `${userData.fullName} sent you ${amount}`,
+            type: notificationEnum.sendMoney
+        })
+
         if (transaction || responseUpdateReceiver || responseUpdateUser) {
             res.status(200).json({
                 status: "success",
                 transaction,
                 responseUpdateReceiver,
-                responseUpdateUser
+                responseUpdateUser,
+                notification,
+                userData
             });
         } else {
             res.status(400).json({status: "fail", message: "no transaction"})
         }
-
     } catch (error) {
         res.status(400).json({status: "fail", message: error});
     }

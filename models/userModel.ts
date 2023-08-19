@@ -62,7 +62,7 @@ const userSchema = new mongoose.Schema({
     passwordResetExpires: Date,
     avatarImg: {
         type: String,
-        default: "https://www.w3schools.com/howto/img_avatar.png", //set default value with a local file
+        default: "http://localhost:8000/uploads/default.jpg",
     },
     iban: {
         type: String,
@@ -110,18 +110,16 @@ userSchema.methods.correctPassword = async function (
     return await bcrypt.compare(candidatePassword, userPassword);
 };
 
-userSchema.methods.changedPasswordAfter = async function (
-    JWTTimestamp: number
-) {
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
     if (this.passwordChangedAt) {
-        const changedTimeStamp = parseInt(this.passwordChangedAt.getTime(), 10);
+        const changedTimeStamp = parseInt(String(this.passwordChangedAt.getTime()), 10);
         console.log(changedTimeStamp, JWTTimestamp);
-        // return JWTTimestamp < changedTimeStamp;
+        return JWTTimestamp < changedTimeStamp;
     }
-
-    //False means NOT changed
+    // False means NOT changed
     return false;
 };
+
 
 userSchema.methods.createPasswordResetToken = function () {
     const resetToken = crypto.randomBytes(32).toString("hex");
