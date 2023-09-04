@@ -7,7 +7,7 @@ import BankingAccount from "../models/bankingAccountModel";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
-//might not work, delete if that is the case
+
 export interface IGetUserAuthInfoRequest extends Request {
     user?: { _id: mongoose.Types.ObjectId };
 }
