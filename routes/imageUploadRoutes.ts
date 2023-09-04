@@ -3,6 +3,7 @@ import {protect} from "../controllers/authController";
 import multer from "multer";
 import * as path from "path";
 import Image from "../models/imageModel";
+import fs from "fs";
 
 const router = express.Router();
 
@@ -19,7 +20,7 @@ const upload = multer({storage: storage});
 
 router.route('/upload').post(protect, upload.single('image'), async (req, res) => {
     try {
-
+        console.log("hellooo")
         const image = new Image({
             filename: req.file!.filename,
             originalname: req.file!.originalname,
@@ -44,5 +45,29 @@ router.route("/get/:fileId").get(async (req: Request, res: Response) => {
         res.status(400).json({status: "fail", message: error})
     }
 });
+router.route("/delete/:filename").delete(async (req: Request, res: Response) => {
+    try {
+        const filename = req.params.filename;
+        // Check if a filename is provided
+        if (!filename) {
+            return res.status(400).json({error: 'Filename is missing in the URL.'});
+        }
+        // Navigate one level above
+        const parentDirectory = path.resolve(__dirname, '..');
+        const filePath = path.join(parentDirectory, 'uploads', filename);
+
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(`Error deleting file: ${err}`);
+                res.status(500).json({error: 'Unable to delete the file'});
+            } else {
+                console.log(`File ${filename} deleted successfully`);
+                res.status(200).json({message: 'File deleted successfully'});
+            }
+        });
+    } catch (error) {
+        res.status(400).json({status: "fail", message: error})
+    }
+})
 
 export default router

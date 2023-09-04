@@ -30,7 +30,6 @@ app.use(bodyParser.json({limit: '1000mb'}));
 app.use(bodyParser.urlencoded({limit: '1000mb', extended: true}));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 //middleware check valid user
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/bankingCards", bankingCardRouter);
